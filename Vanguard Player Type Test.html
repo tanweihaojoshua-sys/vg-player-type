@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vanguard Player Type Test</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fff;--surface:#fff;--ink:#000;--muted:#666;--line:#d9d9d9;--gold:#000;--btn:#f4f4f4;--btnh:#e9e9e9;
+--meta:#000;--jank:#000;--stall:#000;--waifu:#000}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--surface:#000;--ink:#fff;--muted:#999;--line:#333;--gold:#fff;--btn:#141414;--btnh:#222;
+--meta:#fff;--jank:#fff;--stall:#fff;--waifu:#fff}}
+:root[data-theme="dark"]{--bg:#000;--surface:#000;--ink:#fff;--muted:#999;--line:#333;--gold:#fff;--btn:#141414;--btnh:#222;--meta:#fff;--jank:#fff;--stall:#fff;--waifu:#fff}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:300;line-height:1.55;min-height:100vh}
+main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;font-weight:500;letter-spacing:-.01em;line-height:1.2;margin:8px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.card{background:var(--surface);border:1px solid var(--ink);padding:24px 20px}
+.bar{height:2px;background:var(--line);overflow:hidden;margin-bottom:8px}
+.bar>i{display:block;height:100%;background:var(--ink);transition:width .25s}
+.count{font-size:.85rem;color:var(--muted);margin:0 0 14px}
+.q{font-size:1.25rem;font-weight:400;line-height:1.4;margin:0 0 20px;min-height:5.6em}
+.opts{display:flex;flex-direction:column;gap:8px}
+button{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:0;padding:12px 14px;text-align:left;cursor:pointer}
+button:hover{background:var(--btnh)}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+button.sel{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.nav{display:flex;justify-content:space-between;margin-top:14px}
+.nav button{background:none;border:none;color:var(--muted);padding:6px 2px;text-decoration:underline}
+.start{background:var(--ink);color:var(--bg);border:1px solid var(--ink);text-align:center;font-weight:500;width:100%;margin-top:12px}
+.start:hover{background:var(--ink);opacity:.8}
+.rt{font-size:1.8rem;font-weight:500;letter-spacing:-.01em;line-height:1.15;margin:4px 0 4px}
+.big{font-size:3.4rem;font-weight:200;line-height:1;margin:0}
+.res p{margin:10px 0}
+.row{margin:14px 0}
+.row .lab{display:flex;justify-content:space-between;font-size:.95rem;margin-bottom:4px}
+.row .bar{height:6px;margin:0}
+.row .bar>i{background:var(--c)}
+.tag{font-size:.9rem;color:var(--muted)}
+.by{font-size:.8rem;color:var(--muted);letter-spacing:.04em;margin:0}
+input{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--ink);border-radius:0;padding:12px 14px;width:100%;margin:6px 0 12px}
+input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.mail{margin:18px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.mail label{font-size:.9rem;color:var(--muted)}
+.mail button{width:100%;text-align:center}
+</style>
+</head>
+<body>
+<main>
+<p class="by">Designed by Joshua</p>
+<h1>Which Vanguard player are you?</h1>
+<p class="sub">16 statements, 5-point scale. Answer how you actually play, not how you wish you did.</p>
+<div id="app"></div>
+</main>
+<script>
+var T={
+meta:{n:"Meta Slave",c:"var(--meta)",d:"You play to win. If a deck tops the tournament results, it is already in your binder. You read the lists, copy the tech and treat the format as a puzzle with one correct answer. Your friends call you the reason the shops sell out of the best deck.",s:"Strength: you know the format cold.  Watch out for: forgetting what you liked about the game."},
+jank:{n:"Jank Enjoyer",c:"var(--jank)",d:"You live for the deck nobody else is brave enough to play. The moment it gets popular, you are already looking for the next one. A weird tech choice makes your day, and half the fun is the theorycrafting before the first shuffle.",s:"Strength: nobody can read your deck.  Watch out for: spending more time in the notes app than at the table."},
+stall:{n:"The Staller / Controller",c:"var(--stall)",d:"Your opponent’s plan falling apart is the best part of any game. You do not need to advance your own board if theirs is stuck in the hand. Your friends need a break from playing you, and you are happy to find fresh victims.",s:"Strength: you win games by denying them.  Watch out for: the long list of friends who are sick of your deck."},
+waifu:{n:"Waifu / Art Enjoyer",c:"var(--waifu)",d:"You bought the deck for the art and you would do it again. The theme matters, the vibe matters, and losing with your favourite character beats winning with a deck you feel nothing for. Your playmat is a statement.",s:"Strength: you always love your deck.  Watch out for: pre-orders based on one promo image."}
+};
+var Qs={
+meta:["You always look to play the best deck in the format.","You continuously reference online decklists rather than create your own from scratch.","You always prioritise playing decks that are strong over decks you like.","Winning is the most important thing to you in the game."],
+jank:["You hate it when a deck you were initially playing becomes meta.","You appreciate other people for trying weird tech options that are unconventional.","You always play decks that are unpopular and try to make them work.","You love theorycrafting more than actually playing the game."],
+stall:["Your opponent’s suffering brings you great joy in the game.","You like it when you completely disrupt your opponent’s game plan, even though you did not progress your own.","It does not matter if you lose, as long as the opponent suffers or is unable to play the game.","You like it when a stranger approaches you to play a game because your friends are sick of playing against you."],
+waifu:["You value art and aesthetics more than anything else in the game.","It does not matter if you lose, as long as you lose with your favourite decks.","You pre-order or buy a deck based on initial art alone, not meta viability.","You build your deck around aesthetics and making sure the theme fits, rather than practicality."]
+};
+var keys=["meta","jank","stall","waifu"],list=[],i,k;
+for(i=0;i<4;i++)for(k=0;k<4;k++)list.push({c:keys[k],t:Qs[keys[k]][i]});
+var scale=[["Strongly agree",5],["Agree",4],["Neutral",3],["Disagree",2],["Strongly disagree",1]];
+var nm="",ans=[],pos=-1,app=document.getElementById("app");
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function start(){app.innerHTML='<div class="card"><label for="nm" class="tag">Your name</label><input id="nm" type="text" maxlength="30" placeholder="Enter your name" autocomplete="given-name" value="'+esc(nm)+'"><p class="tag">Your result and a percentage breakdown appear at the end. It takes about two minutes.</p><button class="start" id="go">Start the test</button></div>';document.getElementById("go").onclick=function(){nm=document.getElementById("nm").value.trim();pos=0;ans=[];show()}}
+function show(){
+if(pos>=list.length){return result()}
+var q=list[pos],h='<div class="card"><div class="bar"><i style="width:'+(pos/list.length*100)+'%"></i></div><p class="count">Statement '+(pos+1)+' of '+list.length+'</p><p class="q">'+q.t+'</p><div class="opts">';
+scale.forEach(function(s){h+='<button data-v="'+s[1]+'"'+(ans[pos]===s[1]?' class="sel"':'')+'>'+s[0]+'</button>'});
+h+='</div><div class="nav"><button id="back"'+(pos===0?' disabled style="visibility:hidden"':'')+'>Back</button></div></div>';
+app.innerHTML=h;
+Array.prototype.forEach.call(app.querySelectorAll(".opts button"),function(b){b.onclick=function(){ans[pos]=+b.getAttribute("data-v");pos++;show()}});
+var bk=document.getElementById("back");if(bk)bk.onclick=function(){if(pos>0){pos--;show()}};
+}
+function result(){
+var sc={meta:0,jank:0,stall:0,waifu:0};
+list.forEach(function(q,j){sc[q.c]+=ans[j]});
+var pct={},top=keys[0];
+keys.forEach(function(x){pct[x]=Math.round((sc[x]-4)/16*100);if(pct[x]>pct[top])top=x});
+var ties=keys.filter(function(x){return pct[x]===pct[top]});
+var sorted=keys.slice().sort(function(a,b){return pct[b]-pct[a]});
+var t=T[top];
+var h='<div class="card res"><p class="tag">'+(nm?esc(nm)+', your':'Your')+' player type</p><p class="rt" style="color:'+t.c+'">'+t.n+'</p><p class="big" style="color:'+t.c+'">'+pct[top]+'%</p>';
+if(ties.length>1){h+='<p class="tag">Tied with '+ties.filter(function(x){return x!==top}).map(function(x){return T[x].n}).join(" and ")+'. You are a hybrid.</p>'}
+h+='<p>'+t.d+'</p><p class="tag">'+t.s+'</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0">';
+sorted.forEach(function(x){h+='<div class="row" style="--c:'+T[x].c+'"><div class="lab"><span>'+T[x].n+'</span><strong>'+pct[x]+'%</strong></div><div class="bar"><i style="width:'+pct[x]+'%"></i></div></div>'});
+h+='<p class="tag">Each percentage is how strongly you agreed with that type’s four statements: 0% is strongly disagree on all four, 100% is strongly agree on all four.</p><div class="mail"><label for="em">Send my result to your Gmail</label><input id="em" type="email" placeholder="you@gmail.com" autocomplete="email"><button id="send">Email my result</button><p class="tag" id="msg"></p></div><button class="start" id="again">Take it again</button></div>';
+app.innerHTML=h;document.getElementById("again").onclick=start;
+document.getElementById("send").onclick=function(){var v=document.getElementById("em").value.trim(),m=document.getElementById("msg");if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){m.textContent="Enter a valid email address.";return}var body="Hi "+(nm||"there")+",\n\nYour Vanguard player type: "+t.n+" ("+pct[top]+"%)\n\n"+sorted.map(function(x){return T[x].n+": "+pct[x]+"%"}).join("\n")+"\n\nVanguard Player Type Test, designed by Joshua";var a=document.createElement("a");a.href="mailto:"+v+"?subject="+encodeURIComponent("My Vanguard player type: "+t.n)+"&body="+encodeURIComponent(body);a.target="_blank";document.body.appendChild(a);a.click();a.remove();m.textContent="Your email app should open with the result ready to send."};
+}
+start();
+</script>
+</body>
+</html>
